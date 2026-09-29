@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wings & Paws — Marketplace for Birds & Pets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f8fc;
+    --card-bg: #ffffff;
+    --border: #e7ebf3;
+    --text: #1c2233;
+    --muted: #6b7387;
+    --grad1: #7b5cff;
+    --grad2: #ff6fa5;
+    --grad3: #3fd0c9;
+    --on-primary: #ffffff;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10121c; --card-bg: #171a29; --border: #262b40;
+      --text: #eef0fb; --muted: #9aa1bd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10121c; --card-bg: #171a29; --border: #262b40;
+    --text: #eef0fb; --muted: #9aa1bd;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    margin: 0;
+    min-height: 100%;
+  }
+  header {
+    position: relative;
+    overflow: hidden;
+    padding: calc(50px + env(safe-area-inset-top, 0px)) 20px 60px;
+    text-align: center;
+    background: linear-gradient(120deg, var(--grad1), var(--grad2) 60%, var(--grad3));
+    color: var(--on-primary);
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+  header h1 {
+    margin: 0 0 10px;
+    font-size: 2.3rem;
+    font-weight: 700;
+  }
+  header p {
+    margin: 0 auto;
+    max-width: 460px;
+    font-size: 1rem;
+    opacity: 0.95;
+  }
+
+  nav {
+    max-width: 900px;
+    margin: -26px auto 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(30,20,80,0.12);
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+  nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+  }
+  nav a:hover { background: var(--bg); }
+  nav a.nav-active { background: var(--bg); font-weight: 600; }
+
+  .container {
+    max-width: 1000px;
+    margin: 40px auto 30px;
+    padding: 0 20px;
+  }
+  .container h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .container > p.sub {
+    text-align: center;
+    color: var(--muted);
+    margin: 0 0 30px;
+    font-size: 0.95rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(30,20,80,0.06);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+  .fav-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--grad2);
+    z-index: 2;
+  }
+  .fav-btn.active { background: var(--grad2); color: #fff; border-color: var(--grad2); }
+
+  .map-pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 1.6rem;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1;
+  }
+  .map-pin span {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--card-bg);
+    padding: 1px 6px;
+    border-radius: 6px;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .map-pin:hover { transform: translate(-50%, -50%) scale(1.15); }
+
+  .verified-badge {
+    display: inline-block;
+    background: #e6f8ee;
+    color: #1a8f52;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-left: 4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .verified-badge { background: #123b26; color: #4fd98a; }
+  }
+  :root[data-theme="dark"] .verified-badge { background: #123b26; color: #4fd98a; }
+
+  .rating-line { font-size: 0.8rem; color: #d99a1b; font-weight: 600; }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(30,20,80,0.14);
+  }
+  .card .icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+  }
+  .card h3 { margin: 4px 0 0; font-size: 1.1rem; font-weight: 600; }
+  .card p { margin: 0; color: var(--muted); font-size: 0.9rem; flex-grow: 1; line-height: 1.4; }
+  .card p.seller { flex-grow: 0; font-size: 0.8rem; color: var(--grad1); font-weight: 500; }
+  .card p.meta { flex-grow: 0; font-size: 0.82rem; color: var(--text); font-weight: 500; }
+  .card .photo {
+    width: 100%;
+    height: 110px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--grad3), var(--grad1) 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.6rem;
+  }
+  .btn {
+    align-self: flex-start;
+    background: linear-gradient(135deg, var(--grad1), var(--grad2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.08); }
+
+  footer {
+    text-align: center;
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+  <header>
+    <span class="badge">🐣 Community Marketplace</span>
+    <h1>Wings & Paws</h1>
+    <p>Find birds, pets, and services from trusted keepers near you — all in one warm, welcoming place.</p>
+  </header>
+
+  <nav>
+    <a href="#" data-page="home" class="nav-active">Home</a>
+    <a href="#" data-page="list-item">List Item</a>
+    <a href="#" data-page="listings">Browse</a>
+    <a href="#" data-page="community">Community</a>
+    <a href="#" data-page="favorites">♡ Favorites</a>
+    <a href="#" data-page="map">🗺️ Map</a>
+    <a href="#" data-page="ai-tool">✨ AI Assistant</a>
+  </nav>
+
+
+  <div id="home" class="page container" style="margin-top:40px; margin-bottom:0;">
+    <h2>Meet a Few of Our Pets</h2>
+    <p class="sub">A quick look at what's waiting for a new home</p>
+    <div class="grid" style="margin-bottom:10px;">
+      <div class="card">
+        <div class="photo">🦜</div>
+        <h3>Exotic Birds</h3>
+        <p>Vivid colors, gentle temperament — a favorite among first-time bird owners.</p>
+      </div>
+      <div class="card">
+        <div class="photo">🐶</div>
+        <h3>Dogs</h3>
+        <p>Loyal companions from trusted local breeders, vaccinated and well cared for.</p>
+      </div>
+      <div class="card">
+        <div class="photo">🐰</div>
+        <h3>Rabbits</h3>
+        <p>Soft, friendly, and great with kids — perfect starter pets for families.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="list-item" class="page container" style="margin-top:40px; display:none;">
+    <h2>List a Pet or Item</h2>
+    <p class="sub">Fill in the details below to add your listing</p>
+    <form id="listItemForm" style="max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:12px;">
+      <input required id="li-title" type="text" placeholder="Title (e.g. Persian Kitten)" style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+      <textarea required id="li-desc" placeholder="Short description" rows="3" style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text); resize:vertical;"></textarea>
+      <input required id="li-seller" type="text" placeholder="Your name" style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+      <input required id="li-location" type="text" placeholder="Location" style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+      <div style="display:flex; gap:10px;">
+        <input id="li-age" type="text" placeholder="Age (optional)" style="flex:1; padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+        <input id="li-price" type="text" placeholder="Price (e.g. ₹1,500)" style="flex:1; padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+      </div>
+      <label style="font-size:0.85rem; color:var(--muted);">Health / vaccination certificate (optional)
+        <input id="li-cert" type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:block; margin-top:6px; font-family:inherit; font-size:0.85rem; color:var(--text);">
+      </label>
+      <button type="submit" class="btn" style="align-self:flex-start;">Publish Listing</button>
+    </form>
+  </div>
+
+  <div id="listings" class="page container" style="display:none;">
+    <h2>Available Listings</h2>
+    <p class="sub">Fresh picks from breeders, sellers, and pet sitters in your area</p>
+    <div style="max-width:420px; margin:0 auto 14px;">
+      <input type="text" id="searchBox" placeholder="🔍 Search listings (e.g. dog, birds, toys)..."
+        style="width:100%; padding:10px 16px; border-radius:999px; border:1px solid var(--border); font-family:inherit; font-size:0.9rem; background:var(--card-bg); color:var(--text);">
+    </div>
+
+    <div style="max-width:720px; margin:0 auto 24px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <select id="filterCategory" style="padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-family:inherit; font-size:0.85rem;">
+        <option value="">All Species/Types</option>
+        <option value="Bird">Bird</option>
+        <option value="Poultry">Poultry</option>
+        <option value="Dog">Dog</option>
+        <option value="Cat">Cat</option>
+        <option value="Rabbit">Rabbit</option>
+        <option value="Rodent">Rodent</option>
+        <option value="Livestock">Livestock</option>
+        <option value="Fish">Fish</option>
+        <option value="Accessory">Accessory</option>
+        <option value="Service">Service</option>
+        <option value="Feed">Feed</option>
+      </select>
+
+      <select id="filterLocation" style="padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-family:inherit; font-size:0.85rem;">
+        <option value="">All Locations</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Coimbatore">Coimbatore</option>
+        <option value="Madurai">Madurai</option>
+        <option value="Salem">Salem</option>
+        <option value="Trichy">Trichy</option>
+        <option value="Vellore">Vellore</option>
+        <option value="Bengaluru">Bengaluru</option>
+      </select>
+
+      <select id="sortBy" style="padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-family:inherit; font-size:0.85rem;">
+        <option value="">Sort: Default</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+      </select>
+
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:var(--muted); padding:8px 4px;">
+        <input type="checkbox" id="verifiedOnly"> ✔ Verified only
+      </label>
+    </div>
+
+    <div class="grid" id="listingsGrid"><div class="card" data-id="goats" data-category="Livestock" data-price="6000" data-location="Vellore">
+        <button type="button" class="fav-btn" data-id="goats" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐐</div>
+        <h3>Goats</h3>
+        <p>Healthy goats suitable for dairy or rearing. Well-fed and vaccinated.</p>
+        <p class="seller">👤 Murugan Farms · Vellore</p>
+        <p class="meta">Age: 10 months &middot; Price: ₹6,000</p>
+        <button class="btn" data-seller="Murugan Farms" data-location="Vellore">Contact Seller</button>
+      </div>
+      <div class="card" data-id="aquarium-fish" data-category="Fish" data-price="50" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="aquarium-fish" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐟</div>
+        <h3>Aquarium Fish</h3>
+        <p>Colorful freshwater fish (guppies, mollies, tetras) for home aquariums.</p>
+        <p class="seller">👤 AquaWorld · Chennai</p>
+        <p class="meta">Age: — &middot; Price: ₹50 onwards</p>
+        <button class="btn" data-seller="AquaWorld" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="exotic-birds" data-category="Bird" data-price="4500" data-location="Chennai" data-verified="true">
+        <button type="button" class="fav-btn" data-id="exotic-birds" aria-label="Save to favorites">♡</button>
+        <div class="photo">🦜</div>
+        <h3>Exotic Birds</h3>
+        <p>Colorful exotic species from verified breeders. Healthy, hand-raised.</p>
+        <p class="seller">👤 Ravi Kumar · Chennai <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: 6 months &middot; Price: ₹4,500</p>
+        <button class="btn" data-seller="Ravi Kumar" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="love-birds" data-category="Bird" data-price="1200" data-location="Coimbatore">
+        <button type="button" class="fav-btn" data-id="love-birds" aria-label="Save to favorites">♡</button>
+        <div class="photo">💕</div>
+        <h3>Love Birds</h3>
+        <p>Pairs and singles available — great for beginners and enthusiasts alike.</p>
+        <p class="seller">👤 Priya Shankar · Coimbatore</p>
+        <p class="meta">Age: 3 months &middot; Price: ₹1,200 / pair</p>
+        <button class="btn" data-seller="Priya Shankar" data-location="Coimbatore">Contact Seller</button>
+      </div>
+      <div class="card" data-id="hens" data-category="Poultry" data-price="450" data-location="Madurai" data-verified="true">
+        <button type="button" class="fav-btn" data-id="hens" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐔</div>
+        <h3>Hens</h3>
+        <p>Healthy egg-laying hens for home and farm rearing.</p>
+        <p class="seller">👤 Muthu Farms · Madurai <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: 1 year &middot; Price: ₹450</p>
+        <button class="btn" data-seller="Muthu Farms" data-location="Madurai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="country-chicken" data-category="Poultry" data-price="600" data-location="Salem">
+        <button type="button" class="fav-btn" data-id="country-chicken" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐓</div>
+        <h3>Country Chicken</h3>
+        <p>Naturally raised, known for taste and quality. Pairs or bulk.</p>
+        <p class="seller">👤 Selvam Poultry · Salem</p>
+        <p class="meta">Age: 8 months &middot; Price: ₹600</p>
+        <button class="btn" data-seller="Selvam Poultry" data-location="Salem">Contact Seller</button>
+      </div>
+      <div class="card" data-id="cats" data-category="Cat" data-price="2500" data-location="Chennai" data-verified="true">
+        <button type="button" class="fav-btn" data-id="cats" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐱</div>
+        <h3>Cats</h3>
+        <p>Kittens and adult cats from caring local homes and breeders. Litter-trained options available.</p>
+        <p class="seller">👤 Lakshmi Cattery · Chennai <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: 3 months &middot; Price: ₹2,500</p>
+        <button class="btn" data-seller="Lakshmi Cattery" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="dogs" data-category="Dog" data-price="8000" data-location="Chennai" data-verified="true">
+        <button type="button" class="fav-btn" data-id="dogs" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐶</div>
+        <h3>Dogs</h3>
+        <p>Puppies and adults from trusted local owners and breeders. Vaccinated.</p>
+        <p class="seller">👤 Anitha Breeders · Chennai <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: 2 months &middot; Price: ₹8,000</p>
+        <button class="btn" data-seller="Anitha Breeders" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="rabbits" data-category="Rabbit" data-price="900" data-location="Trichy" data-verified="true">
+        <button type="button" class="fav-btn" data-id="rabbits" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐰</div>
+        <h3>Rabbits</h3>
+        <p>Friendly pet rabbits suitable for homes with kids. Various breeds.</p>
+        <p class="seller">👤 Karthik Pets · Trichy <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: 4 months &middot; Price: ₹900</p>
+        <button class="btn" data-seller="Karthik Pets" data-location="Trichy">Contact Seller</button>
+      </div>
+      <div class="card" data-id="hamsters" data-category="Rodent" data-price="350" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="hamsters" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐹</div>
+        <h3>Hamsters</h3>
+        <p>Friendly hamsters ready for a new home, with cage and starter kit options.</p>
+        <p class="seller">👤 Little Paws Home · Chennai</p>
+        <p class="meta">Age: 2 months &middot; Price: ₹350</p>
+        <button class="btn" data-seller="Little Paws Home" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="guinea-pigs" data-category="Rodent" data-price="700" data-location="Vellore">
+        <button type="button" class="fav-btn" data-id="guinea-pigs" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐹</div>
+        <h3>Guinea Pigs</h3>
+        <p>Gentle guinea pigs, great with kids. Pairs available for companionship.</p>
+        <p class="seller">👤 Deepa's Small Pets · Vellore</p>
+        <p class="meta">Age: 3 months &middot; Price: ₹700</p>
+        <button class="btn" data-seller="Deepa's Small Pets" data-location="Vellore">Contact Seller</button>
+      </div>
+      <div class="card" data-id="pet-rats" data-category="Rodent" data-price="300" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="pet-rats" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐀</div>
+        <h3>Pet Rats</h3>
+        <p>Tame, hand-raised pet rats known for being social and easy to care for.</p>
+        <p class="seller">👤 Suresh Rodent Care · Chennai</p>
+        <p class="meta">Age: 2 months &middot; Price: ₹300</p>
+        <button class="btn" data-seller="Suresh Rodent Care" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="conure-cage-for-rent" data-category="Accessory" data-price="300" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="conure-cage-for-rent" aria-label="Save to favorites">♡</button>
+        <div class="photo">🏠</div>
+        <h3>Conure Cage for Rent</h3>
+        <p>Spacious cage suitable for conures and lovebirds. Weekly rental.</p>
+        <p class="seller">👤 Meena Rentals · Chennai</p>
+        <p class="meta">Age: — &middot; Price: ₹300 / week</p>
+        <button class="btn" data-seller="Meena Rentals" data-location="Chennai">Contact Owner</button>
+      </div>
+      <div class="card" data-id="bird-sitting-service" data-category="Service" data-price="250" data-location="Bengaluru" data-verified="true">
+        <button type="button" class="fav-btn" data-id="bird-sitting-service" aria-label="Save to favorites">♡</button>
+        <div class="photo">🧑‍🌾</div>
+        <h3>Bird Sitting Service</h3>
+        <p>Experienced keeper offering weekend boarding for parrots and budgies.</p>
+        <p class="seller">👤 Arjun Bird Care · Bengaluru <span class="verified-badge">✔ Verified</span></p>
+        <p class="meta">Age: — &middot; Price: ₹250 / day</p>
+        <button class="btn" data-seller="Arjun Bird Care" data-location="Bengaluru">Contact Sitter</button>
+      </div>
+      <div class="card" data-id="bird-toys" data-category="Accessory" data-price="150" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="bird-toys" aria-label="Save to favorites">♡</button>
+        <div class="photo">🎾</div>
+        <h3>Bird Toys</h3>
+        <p>Chew toys, swings, and mirrors to keep parrots and budgies active and happy.</p>
+        <p class="seller">👤 PetJoy Store · Chennai</p>
+        <p class="meta">Age: — &middot; Price: ₹150 onwards</p>
+        <button class="btn" data-seller="PetJoy Store" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="bird-products-accessories" data-category="Accessory" data-price="100" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="bird-products-accessories" aria-label="Save to favorites">♡</button>
+        <div class="photo">🛒</div>
+        <h3>Bird Products & Accessories</h3>
+        <p>Perches, feeders, nesting boxes, and grooming supplies for all bird types.</p>
+        <p class="seller">👤 FeatherMart · Chennai</p>
+        <p class="meta">Age: — &middot; Price: ₹100 onwards</p>
+        <button class="btn" data-seller="FeatherMart" data-location="Chennai">Contact Seller</button>
+      </div>
+      <div class="card" data-id="organic-bird-feed" data-category="Feed" data-price="120" data-location="Chennai">
+        <button type="button" class="fav-btn" data-id="organic-bird-feed" aria-label="Save to favorites">♡</button>
+        <div class="photo">🌾</div>
+        <h3>Organic Bird Feed</h3>
+        <p>Locally sourced millet and sunflower seeds, 1kg packs.</p>
+        <p class="seller">👤 GreenGrain Supplies · Chennai</p>
+        <p class="meta">Age: — &middot; Price: ₹120 / kg</p>
+        <button class="btn" data-seller="GreenGrain Supplies" data-location="Chennai">Contact Seller</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="community" class="page container" style="margin-top:40px; display:none;">
+    <h2>Community</h2>
+    <p class="sub">Tips, questions, and stories from fellow bird & pet owners</p>
+    <div class="grid">
+      <div class="card">
+        <div class="photo">💬</div>
+        <h3>Best food for love birds?</h3>
+        <p>"Switched to a millet + sprouts mix and my pair has never been happier!"</p>
+        <p class="seller">👤 Deepa · 3 replies</p>
+      </div>
+      <div class="card">
+        <div class="photo">💬</div>
+        <h3>Tips for first-time dog owners</h3>
+        <p>"Start crate training early — made house-training so much easier for us."</p>
+        <p class="seller">👤 Arjun · 7 replies</p>
+      </div>
+      <div class="card">
+        <div class="photo">💬</div>
+        <h3>Guinea pig bonding advice</h3>
+        <p>"Introduce them slowly in neutral territory — worked great for my two!"</p>
+        <p class="seller">👤 Meena · 5 replies</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top:36px;">⭐ Seller & Service Reviews</h2>
+    <p class="sub">Rate and read feedback from other buyers</p>
+
+    <form id="reviewForm" style="max-width:480px; margin:0 auto 24px; display:flex; flex-direction:column; gap:12px;">
+      <select id="rev-seller" required style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text);">
+        <option value="">Select a seller / service...</option>
+      </select>
+      <div id="rev-stars" style="display:flex; gap:6px; font-size:1.5rem; cursor:pointer;">
+        <span data-star="1">☆</span><span data-star="2">☆</span><span data-star="3">☆</span><span data-star="4">☆</span><span data-star="5">☆</span>
+      </div>
+      <textarea id="rev-comment" required rows="3" placeholder="Share your experience..." style="padding:10px 14px; border-radius:10px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text); resize:vertical;"></textarea>
+      <button type="submit" class="btn" style="align-self:flex-start;">Submit Review</button>
+    </form>
+
+    <div id="reviewsList" style="max-width:520px; margin:0 auto; display:flex; flex-direction:column; gap:12px;"></div>
+  </div>
+
+  <div id="favorites" class="page container" style="margin-top:40px; display:none;">
+    <h2>♡ Your Favorites</h2>
+    <p class="sub">Listings you've saved for later</p>
+    <div class="grid" id="favoritesGrid"></div>
+    <p id="noFavorites" style="text-align:center; color:var(--muted); display:none;">You haven't saved any listings yet. Tap the heart icon on a listing to save it here.</p>
+  </div>
+
+  <div id="map" class="page container" style="margin-top:40px; display:none;">
+    <h2>🗺️ Seller Map</h2>
+    <p class="sub">An illustrative view of where sellers and services are located</p>
+    <div style="position:relative; max-width:520px; margin:0 auto; aspect-ratio:4/3; background:var(--card-bg); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+      <div class="map-pin" style="top:30%; left:55%;" data-city="Chennai">📍<span>Chennai</span></div>
+      <div class="map-pin" style="top:52%; left:30%;" data-city="Coimbatore">📍<span>Coimbatore</span></div>
+      <div class="map-pin" style="top:70%; left:38%;" data-city="Madurai">📍<span>Madurai</span></div>
+      <div class="map-pin" style="top:45%; left:45%;" data-city="Salem">📍<span>Salem</span></div>
+      <div class="map-pin" style="top:60%; left:48%;" data-city="Trichy">📍<span>Trichy</span></div>
+      <div class="map-pin" style="top:20%; left:40%;" data-city="Vellore">📍<span>Vellore</span></div>
+      <div class="map-pin" style="top:8%; left:20%;" data-city="Bengaluru">📍<span>Bengaluru</span></div>
+    </div>
+    <div id="mapSellerList" style="max-width:520px; margin:20px auto 0; text-align:center; color:var(--muted); font-size:0.9rem;">Tap a pin to see sellers in that city</div>
+  </div>
+
+  <div id="ai-tool" class="page container" style="margin-top:40px; display:none;">
+    <h2>✨ AI Assistant</h2>
+    <p class="sub">Get instant help — for buyers finding the right pet, or sellers writing a great listing</p>
+
+    <div style="max-width:560px; margin:0 auto;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; justify-content:center;">
+        <button type="button" class="btn ai-preset" data-preset="buyer" style="background:var(--grad3);">🐾 I'm a Buyer</button>
+        <button type="button" class="btn ai-preset" data-preset="seller" style="background:var(--grad2);">🏷️ I'm a Seller</button>
+        <button type="button" class="btn ai-preset" data-preset="recommend" style="background:var(--grad1); color:#fff;">✨ Suggest me a pet</button>
+      </div>
+
+      <textarea id="aiInput" rows="4" placeholder="e.g. 'I live in a small apartment and want a quiet pet' or 'Help me write a listing for my 3-month-old love birds'"
+        style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); font-family:inherit; background:var(--card-bg); color:var(--text); resize:vertical;"></textarea>
+
+      <button id="aiSubmit" class="btn" style="margin-top:12px;">Ask the Assistant</button>
+      <p id="aiStatus" style="color:var(--muted); font-size:0.85rem; margin-top:8px; display:none;">Thinking...</p>
+
+      <div id="aiResponse" style="margin-top:18px; background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:18px; display:none; white-space:pre-wrap; line-height:1.5; font-size:0.95rem;"></div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Wings & Paws — a warmer way to find your next companion
+  </footer>
+
+  <div id="toast" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--bg); padding:12px 22px; border-radius:999px; font-size:0.9rem; font-weight:500; opacity:0; pointer-events:none; transition:opacity 0.25s ease, transform 0.25s ease; z-index:50; box-shadow:0 8px 24px rgba(0,0,0,0.25);"></div>
+
+  <button id="chatToggle" aria-label="Open chat support" style="position:fixed; bottom:24px; right:20px; width:54px; height:54px; border-radius:50%; border:none; background:linear-gradient(135deg, var(--grad1), var(--grad2)); color:#fff; font-size:1.4rem; cursor:pointer; box-shadow:0 8px 20px rgba(30,20,80,0.3); z-index:60;">💬</button>
+
+  <div id="chatPanel" style="display:none; position:fixed; bottom:90px; right:20px; width:min(320px, calc(100vw - 40px)); max-height:420px; background:var(--card-bg); border:1px solid var(--border); border-radius:16px; box-shadow:0 12px 30px rgba(0,0,0,0.25); z-index:60; overflow:hidden; flex-direction:column;">
+    <div style="background:linear-gradient(120deg, var(--grad1), var(--grad2)); color:#fff; padding:12px 16px; font-weight:600; display:flex; justify-content:space-between; align-items:center;">
+      <span>💬 Chat Support</span>
+      <button id="chatClose" aria-label="Close chat" style="background:none; border:none; color:#fff; font-size:1.1rem; cursor:pointer;">✕</button>
+    </div>
+    <div id="chatMessages" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; font-size:0.88rem; max-height:280px;">
+      <div style="background:var(--bg); padding:8px 12px; border-radius:10px; align-self:flex-start; max-width:85%;">Hi! I'm here to help buyers and sellers on Wings & Paws. Ask me anything — how to list an item, what to look for when buying, or how a feature works.</div>
+    </div>
+    <form id="chatForm" style="display:flex; gap:6px; padding:10px; border-top:1px solid var(--border);">
+      <input id="chatInput" type="text" placeholder="Type your question..." style="flex:1; padding:8px 12px; border-radius:10px; border:1px solid var(--border); font-family:inherit; font-size:0.85rem; background:var(--bg); color:var(--text);">
+      <button type="submit" class="btn" style="padding:8px 14px; font-size:0.85rem;">Send</button>
+    </form>
+  </div>
+
+  <script>
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+      }, 2500);
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('#listingsGrid .btn, #favoritesGrid .btn');
+      if (!btn) return;
+      const seller = btn.dataset.seller || "the seller";
+      const location = btn.dataset.location || "";
+      showToast(`Contact request sent to ${seller}${location ? " (" + location + ")" : ""}!`);
+    });
+
+    // AI Assistant
+    let sampleFn = null;
+    claude.use('sample').then(fn => { sampleFn = fn; });
+
+    const aiInput = document.getElementById('aiInput');
+    const aiSubmit = document.getElementById('aiSubmit');
+    const aiStatus = document.getElementById('aiStatus');
+    const aiResponse = document.getElementById('aiResponse');
+
+    document.querySelectorAll('.ai-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.preset === 'buyer') {
+          aiInput.placeholder = "e.g. 'I live in a small apartment and want a quiet, low-maintenance pet'";
+          aiInput.dataset.role = 'buyer';
+        } else if (btn.dataset.preset === 'seller') {
+          aiInput.placeholder = "e.g. 'Help me write a listing for my 3-month-old love birds, ₹1,200 for the pair'";
+          aiInput.dataset.role = 'seller';
+        } else if (btn.dataset.preset === 'recommend') {
+          aiInput.placeholder = "e.g. 'I have kids and a small budget, what should I get?'";
+          aiInput.dataset.role = 'recommend';
+        }
+        aiInput.focus();
+      });
+    });
+
+    function getInventorySummary() {
+      return Array.from(document.querySelectorAll('#listingsGrid .card')).map(card => {
+        const title = card.querySelector('h3').textContent;
+        const category = card.dataset.category;
+        const price = card.querySelector('.meta') ? card.querySelector('.meta').textContent : '';
+        const location = card.dataset.location;
+        return `${title} (${category}, ${location}) — ${price}`;
+      }).join('\n');
+    }
+
+    aiSubmit.addEventListener('click', async () => {
+      const question = aiInput.value.trim();
+      if (!question) { showToast('Please type your question first.'); return; }
+      if (!sampleFn) {
+        showToast('AI Assistant is not available in this view.');
+        return;
+      }
+      const role = aiInput.dataset.role || 'general';
+      let systemContext = "You are a friendly assistant for a pet & bird marketplace called Wings & Paws. ";
+      if (role === 'buyer') {
+        systemContext += "Help this buyer figure out which pet or bird might suit their lifestyle, and give practical next-step advice.";
+      } else if (role === 'seller') {
+        systemContext += "Help this seller write a clear, appealing listing description (title + short description), and suggest a fair price range if possible.";
+      } else if (role === 'recommend') {
+        systemContext += "Based on the buyer's preferences and the CURRENT LIVE LISTINGS below, recommend 1-3 specific listings by name that best fit, and briefly say why. Only recommend from this list:\n\n" + getInventorySummary();
+      } else {
+        systemContext += "Help either a buyer or seller of pets/birds with their question, as relevant.";
+      }
+
+      aiSubmit.disabled = true;
+      aiStatus.style.display = 'block';
+      aiResponse.style.display = 'none';
+
+      try {
+        const result = await sampleFn(
+          `${systemContext}\n\nUser message: ${question}`,
+          {
+            onText: ({ text }) => {
+              aiResponse.style.display = 'block';
+              aiResponse.textContent = text;
+            }
+          }
+        );
+        aiResponse.style.display = 'block';
+        aiResponse.textContent = result.text;
+      } catch (err) {
+        showToast('Something went wrong asking the assistant.');
+      } finally {
+        aiStatus.style.display = 'none';
+        aiSubmit.disabled = false;
+      }
+    });
+
+    // Page switching
+    const pages = document.querySelectorAll('.page');
+    const navLinks = document.querySelectorAll('nav a[data-page]');
+    function showPage(id) {
+      pages.forEach(p => p.style.display = (p.id === id) ? '' : 'none');
+      navLinks.forEach(l => l.classList.toggle('nav-active', l.dataset.page === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (id === 'favorites') renderFavoritesPage();
+    }
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage(link.dataset.page);
+      });
+    });
+
+    // List Item form
+    document.getElementById('listItemForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('li-title').value.trim();
+      const desc = document.getElementById('li-desc').value.trim();
+      const seller = document.getElementById('li-seller').value.trim();
+      const location = document.getElementById('li-location').value.trim();
+      const age = document.getElementById('li-age').value.trim() || '—';
+      const price = document.getElementById('li-price').value.trim() || '—';
+      const certFile = document.getElementById('li-cert').files[0];
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      const slug = 'custom-' + Date.now();
+      const priceNum = parseFloat((price.match(/[\d,]+/) || ['0'])[0].replace(/,/g, '')) || 0;
+      card.dataset.id = slug;
+      card.dataset.category = 'Other';
+      card.dataset.price = priceNum;
+      card.dataset.location = location;
+      card.innerHTML = `
+        <button type="button" class="fav-btn" data-id="${slug}" aria-label="Save to favorites">♡</button>
+        <div class="photo">🐾</div>
+        <h3></h3>
+        <p></p>
+        <p class="seller">👤  · </p>
+        <p class="meta">Age:  &middot; Price: </p>
+        <p class="cert-line" style="display:none; font-size:0.8rem;"></p>
+        <button class="btn">Contact Seller</button>
+      `;
+      card.querySelector('h3').textContent = title;
+      card.querySelector('p').textContent = desc;
+      const sellerP = card.querySelectorAll('p')[1];
+      sellerP.textContent = `👤 ${seller} · ${location}`;
+      const metaP = card.querySelectorAll('p')[2];
+      metaP.textContent = `Age: ${age} · Price: ${price}`;
+      const btn = card.querySelector('.btn');
+      btn.dataset.seller = seller;
+      btn.dataset.location = location;
+
+      if (certFile) {
+        const certUrl = URL.createObjectURL(certFile);
+        const certP = card.querySelector('.cert-line');
+        certP.style.display = 'block';
+        certP.innerHTML = `<a href="${certUrl}" target="_blank" rel="noopener" style="color:var(--grad1); text-decoration:none;">📄 Health Certificate attached</a>`;
+      }
+
+      document.getElementById('listingsGrid').prepend(card);
+      e.target.reset();
+      showToast('Your listing has been published!');
+      showPage('listings');
+    });
+
+    const searchBox = document.getElementById('searchBox');
+    const filterCategory = document.getElementById('filterCategory');
+    const filterLocation = document.getElementById('filterLocation');
+    const sortBy = document.getElementById('sortBy');
+    const verifiedOnly = document.getElementById('verifiedOnly');
+    const listingsGrid = document.getElementById('listingsGrid');
+
+    function applyFiltersAndSort() {
+      const q = searchBox.value.trim().toLowerCase();
+      const cat = filterCategory.value;
+      const loc = filterLocation.value;
+      const sort = sortBy.value;
+      const onlyVerified = verifiedOnly.checked;
+
+      const cards = Array.from(listingsGrid.querySelectorAll('.card'));
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const matchesText = text.includes(q);
+        const matchesCat = !cat || card.dataset.category === cat;
+        const matchesLoc = !loc || card.dataset.location === loc;
+        const matchesVerified = !onlyVerified || card.dataset.verified === 'true';
+        card.style.display = (matchesText && matchesCat && matchesLoc && matchesVerified) ? '' : 'none';
+      });
+
+      if (sort === 'price-asc' || sort === 'price-desc') {
+        const sorted = cards.slice().sort((a, b) => {
+          const pa = parseFloat(a.dataset.price) || 0;
+          const pb = parseFloat(b.dataset.price) || 0;
+          return sort === 'price-asc' ? pa - pb : pb - pa;
+        });
+        sorted.forEach(card => listingsGrid.appendChild(card));
+      }
+    }
+    searchBox.addEventListener('input', applyFiltersAndSort);
+    filterCategory.addEventListener('change', applyFiltersAndSort);
+    filterLocation.addEventListener('change', applyFiltersAndSort);
+    sortBy.addEventListener('change', applyFiltersAndSort);
+    verifiedOnly.addEventListener('change', applyFiltersAndSort);
+
+    // Favorites (persisted per-viewer via localStorage)
+    function getFavorites() {
+      try { return JSON.parse(localStorage.getItem('wp_favorites') || '[]'); }
+      catch (e) { return []; }
+    }
+    function setFavorites(list) {
+      try { localStorage.setItem('wp_favorites', JSON.stringify(list)); } catch (e) {}
+    }
+    function refreshFavButtons() {
+      const favs = getFavorites();
+      document.querySelectorAll('.fav-btn').forEach(btn => {
+        const isFav = favs.includes(btn.dataset.id);
+        btn.classList.toggle('active', isFav);
+        btn.textContent = isFav ? '♥' : '♡';
+      });
+    }
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.fav-btn');
+      if (!btn) return;
+      let favs = getFavorites();
+      const id = btn.dataset.id;
+      if (favs.includes(id)) {
+        favs = favs.filter(f => f !== id);
+        showToast('Removed from favorites');
+      } else {
+        favs.push(id);
+        showToast('Saved to favorites');
+      }
+      setFavorites(favs);
+      refreshFavButtons();
+    });
+    function renderFavoritesPage() {
+      const favs = getFavorites();
+      const favGrid = document.getElementById('favoritesGrid');
+      const noFav = document.getElementById('noFavorites');
+      favGrid.innerHTML = '';
+      const matchingCards = Array.from(document.querySelectorAll('#listingsGrid .card'))
+        .filter(c => favs.includes(c.dataset.id));
+      if (matchingCards.length === 0) {
+        noFav.style.display = 'block';
+      } else {
+        noFav.style.display = 'none';
+        matchingCards.forEach(c => favGrid.appendChild(c.cloneNode(true)));
+      }
+    }
+    refreshFavButtons();
+
+    // Community Reviews
+    const allSellerNames = Array.from(new Set(
+      Array.from(document.querySelectorAll('#listingsGrid .btn[data-seller]')).map(b => b.dataset.seller)
+    ));
+    const revSellerSelect = document.getElementById('rev-seller');
+    allSellerNames.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      revSellerSelect.appendChild(opt);
+    });
+
+    let currentRating = 0;
+    document.querySelectorAll('#rev-stars span').forEach(star => {
+      star.addEventListener('click', () => {
+        currentRating = parseInt(star.dataset.star, 10);
+        document.querySelectorAll('#rev-stars span').forEach(s => {
+          s.textContent = parseInt(s.dataset.star, 10) <= currentRating ? '★' : '☆';
+        });
+      });
+    });
+
+    function getReviews() {
+      try { return JSON.parse(localStorage.getItem('wp_reviews') || '[]'); }
+      catch (e) { return []; }
+    }
+    function setReviews(list) {
+      try { localStorage.setItem('wp_reviews', JSON.stringify(list)); } catch (e) {}
+    }
+    function sellerRatingSummary(seller) {
+      const revs = getReviews().filter(r => r.seller === seller);
+      if (revs.length === 0) return null;
+      const avg = revs.reduce((sum, r) => sum + r.rating, 0) / revs.length;
+      return { avg: avg.toFixed(1), count: revs.length };
+    }
+    function renderRatingsOnCards() {
+      document.querySelectorAll('#listingsGrid .card').forEach(card => {
+        const btn = card.querySelector('.btn[data-seller]');
+        if (!btn) return;
+        const summary = sellerRatingSummary(btn.dataset.seller);
+        let ratingEl = card.querySelector('.rating-line');
+        if (summary) {
+          if (!ratingEl) {
+            ratingEl = document.createElement('p');
+            ratingEl.className = 'rating-line';
+            const metaP = card.querySelector('.meta');
+            metaP.insertAdjacentElement('afterend', ratingEl);
+          }
+          ratingEl.textContent = `★ ${summary.avg} (${summary.count} review${summary.count > 1 ? 's' : ''})`;
+        } else if (ratingEl) {
+          ratingEl.remove();
+        }
+      });
+    }
+    function renderReviewsList() {
+      const list = document.getElementById('reviewsList');
+      const revs = getReviews().slice().reverse();
+      if (revs.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:var(--muted);">No reviews yet — be the first to leave one!</p>';
+        return;
+      }
+      list.innerHTML = revs.map(r => `
+        <div class="card" style="padding:14px 16px;">
+          <p class="seller" style="margin:0 0 4px;">👤 ${r.seller}</p>
+          <p class="rating-line" style="margin:0 0 6px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</p>
+          <p style="margin:0; color:var(--muted); font-size:0.9rem;">${r.comment}</p>
+        </div>
+      `).join('');
+    }
+    document.getElementById('reviewForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const seller = revSellerSelect.value;
+      const comment = document.getElementById('rev-comment').value.trim();
+      if (!seller || currentRating === 0 || !comment) {
+        showToast('Please select a seller, a rating, and add a comment.');
+        return;
+      }
+      const revs = getReviews();
+      revs.push({ seller, rating: currentRating, comment });
+      setReviews(revs);
+      e.target.reset();
+      currentRating = 0;
+      document.querySelectorAll('#rev-stars span').forEach(s => s.textContent = '☆');
+      showToast('Thanks for your review!');
+      renderReviewsList();
+      renderRatingsOnCards();
+    });
+    renderReviewsList();
+    renderRatingsOnCards();
+
+    // Recommendation Engine — "You may also like"
+    function renderRelatedItems() {
+      const allCards = Array.from(document.querySelectorAll('#listingsGrid .card'));
+      allCards.forEach(card => {
+        if (card.querySelector('.related-line')) return; // avoid duplicating on re-run
+        const category = card.dataset.category;
+        const myTitle = card.querySelector('h3').textContent;
+        const related = allCards
+          .filter(c => c !== card && c.dataset.category === category)
+          .slice(0, 2)
+          .map(c => c.querySelector('h3').textContent);
+        if (related.length > 0) {
+          const p = document.createElement('p');
+          p.className = 'related-line';
+          p.style.cssText = 'font-size:0.78rem; color:var(--muted); margin-top:-4px;';
+          p.innerHTML = '👉 You may also like: ' + related.map(name =>
+            `<a href="#" class="related-link" data-name="${name}" style="color:var(--grad1); text-decoration:none;">${name}</a>`
+          ).join(', ');
+          const metaOrRating = card.querySelector('.rating-line') || card.querySelector('.meta');
+          metaOrRating.insertAdjacentElement('afterend', p);
+        }
+      });
+    }
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('.related-link');
+      if (!link) return;
+      e.preventDefault();
+      showPage('listings');
+      searchBox.value = link.dataset.name;
+      applyFiltersAndSort();
+      searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    renderRelatedItems();
+
+    // Chat Support widget
+    const chatToggle = document.getElementById('chatToggle');
+    const chatPanel = document.getElementById('chatPanel');
+    const chatClose = document.getElementById('chatClose');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+
+    chatToggle.addEventListener('click', () => {
+      const isOpen = chatPanel.style.display === 'flex';
+      chatPanel.style.display = isOpen ? 'none' : 'flex';
+    });
+    chatClose.addEventListener('click', () => { chatPanel.style.display = 'none'; });
+
+    function addChatBubble(text, fromUser) {
+      const bubble = document.createElement('div');
+      bubble.textContent = text;
+      bubble.style.cssText = `padding:8px 12px; border-radius:10px; max-width:85%; ${
+        fromUser
+          ? 'align-self:flex-end; background:var(--grad1); color:#fff;'
+          : 'align-self:flex-start; background:var(--bg); color:var(--text);'
+      }`;
+      chatMessages.appendChild(bubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return bubble;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+      addChatBubble(msg, true);
+      chatInput.value = '';
+
+      if (!sampleFn) {
+        addChatBubble("Sorry, chat support isn't available in this view right now.", false);
+        return;
+      }
+      const thinkingBubble = addChatBubble('Typing...', false);
+      try {
+        const result = await sampleFn(
+          `You are quick, friendly chat support for a pet & bird marketplace called Wings & Paws. Answer buyers' and sellers' questions concisely (2-4 sentences). Question: ${msg}`,
+          { onText: ({ text }) => { thinkingBubble.textContent = text; chatMessages.scrollTop = chatMessages.scrollHeight; } }
+        );
+        thinkingBubble.textContent = result.text;
+      } catch (err) {
+        thinkingBubble.textContent = "Sorry, something went wrong. Please try again.";
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+    const cityToSellers = {};
+    document.querySelectorAll('#listingsGrid .card').forEach(card => {
+      const loc = card.dataset.location;
+      const name = card.querySelector('h3').textContent;
+      const sellerP = card.querySelector('.seller');
+      const seller = sellerP ? sellerP.textContent.replace('👤 ', '').split(' · ')[0] : '';
+      if (!cityToSellers[loc]) cityToSellers[loc] = [];
+      cityToSellers[loc].push(`${seller} (${name})`);
+    });
+    document.querySelectorAll('.map-pin').forEach(pin => {
+      pin.addEventListener('click', () => {
+        const city = pin.dataset.city;
+        const sellers = cityToSellers[city];
+        const listEl = document.getElementById('mapSellerList');
+        if (sellers && sellers.length) {
+          listEl.innerHTML = `<strong>${city}</strong><br>` + sellers.join('<br>');
+        } else {
+          listEl.innerHTML = `No listed sellers in ${city} yet.`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
